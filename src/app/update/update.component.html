@@ -1,0 +1,134 @@
+<h2>Update Employee</h2>
+<div>
+    <form [formGroup]="formdata" *ngIf="shwForm" (ngSubmit)="onUpdate(formdata.value)">
+        <div class="row">
+            <mat-form-field appearance="outline">
+                <mat-label>ID</mat-label>
+                <input matInput placeholder="Enter Id" name="id" formControlName="id" required >
+                <mat-error>You must enter an Id</mat-error>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+                <mat-label>First Name</mat-label>
+                <input matInput placeholder="Enter Name" formControlName="fname" required>
+                <mat-error>You must enter your name</mat-error>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+                <mat-label>Last Name</mat-label>
+                <input matInput placeholder="Enter" formControlName="lname">
+            </mat-form-field>
+        </div>
+        <div class="row">
+            <mat-form-field appearance="fill">
+                <mat-label>Email</mat-label>
+                <input matInput placeholder="pat@example.com" formControlName="email" required>
+                <mat-error *ngIf="formdata.get('email') && formdata.get('email')?.hasError('required')">Email is
+                    required</mat-error>
+                <mat-error *ngIf="formdata.get('email') && formdata.get('email')?.hasError('email')">Email is
+                    invalid</mat-error>
+            </mat-form-field>
+
+            <mat-form-field hintLabel="Max 10 numbers" appearance="fill">
+                <mat-label>Phone Number</mat-label>
+                <input matInput #input minlength="10" maxlength="10" placeholder="xxxxxxxxxx" required
+                    formControlName="phonenumber" type="tel">
+                <mat-icon matSuffix>phone</mat-icon>
+                <mat-hint align="end">{{input.value.length}}/10</mat-hint>
+                <mat-error
+                    *ngIf="formdata.get('phonenumber') && formdata.get('phonenumber')?.hasError('required')">Phone
+                    Number is required</mat-error>
+                <mat-error
+                    *ngIf="formdata.get('phonenumber') && formdata.get('phonenumber')?.hasError('minLength')">Phone
+                    Number invalid</mat-error>
+            </mat-form-field>
+
+        </div>
+        <div class="row">
+            <mat-form-field>
+                <mat-label>Date of Birth</mat-label>
+                <input matInput placeholder="" formControlName="dob" [matDatepicker]="picker">
+                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+                <mat-error>Date of Birth is required</mat-error>
+            </mat-form-field>
+
+            <mat-radio-group formControlName="gender">
+                <mat-label>Gender</mat-label>
+                <mat-radio-button value="female">Female</mat-radio-button>
+                <mat-radio-button value="male">Male</mat-radio-button>
+                <mat-radio-button value="others">Others</mat-radio-button>
+            </mat-radio-group>
+        </div>
+        <div class="row">
+            <mat-form-field>
+                <mat-label>City</mat-label>
+                <input matInput placeholder="Enter City" formControlName="city">
+                <mat-error>City is required</mat-error>
+            </mat-form-field>
+
+            <mat-form-field>
+                <mat-label>State</mat-label>
+                <input matInput placeholder="Enter State" formControlName="state">
+                <mat-error>State is required</mat-error>
+            </mat-form-field>
+        </div>
+        <div class="row">
+            <mat-form-field>
+                <mat-label>Country</mat-label>
+                <input matInput placeholder="Enter Country" formControlName="country">
+                <mat-error>Country is required</mat-error>
+            </mat-form-field>
+
+            <mat-form-field hintLabel="Max 6 characters" appearance="fill">
+                <mat-label>Pincode</mat-label>
+                <input matInput #input minlength="6" maxlength="6" placeholder="xxxxxx" required
+                    formControlName="pincode">
+                <mat-hint align="end">{{input.value.length}}/6</mat-hint>
+                <mat-error *ngIf="formdata.get('pincode') && formdata.get('pincode')?.hasError('required')">Pincode is
+                    required</mat-error>
+                <mat-error *ngIf="formdata.get('pincode') && formdata.get('pincode')?.hasError('minLength')">Pincode id
+                    invalid</mat-error>
+            </mat-form-field>
+        </div>
+        <div class="row">
+            <mat-form-field appearance="fill">
+                <mat-label>Education</mat-label>
+                <mat-select formControlName="education">
+                    <mat-option *ngFor="let val of education" [value]="val">{{val}}
+                    </mat-option>
+                </mat-select>
+                <mat-error>Education is required</mat-error>
+            </mat-form-field>
+        </div>
+        <div class="btn">
+            <button mat-raised-button color="primary" type="submit">Update</button>
+        </div>
+        
+
+    </form>
+
+
+
+
+
+
+<!-- <div>
+    <form #formdata="ngForm" (ngSubmit)="onUpdate(formdata.value)">
+        <div>
+            <label for="id">Id*</label>
+            <input name="id" type="text" ngModel="{{data?.id}}" required>
+        </div>
+        <div>
+            <label for="name">Name*</label>
+            <input name="fname" type="text" ngModel="{{data?.fname}}"  required>
+        </div>
+        <div>
+            <label for="email">E-Mail*</label>
+            <input name="email" type="email" ngModel="{{data?.email}}"  required>
+        </div>
+        <div>
+            <label for="phoneNumber">PhoneNumber*</label>
+            <input name="phoneNumber" type="number"  ngModel="{{data?.phoneNumber}}"  required>
+        </div>
+        <button type="submit">Update</button>
+    </form>
+</div> -->

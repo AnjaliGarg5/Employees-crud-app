@@ -1,0 +1,79 @@
+<button mat-fab extended color="accent" (click)="openAdd()"><mat-icon>add</mat-icon> Add Employee</button>
+<br><br>
+<mat-form-field>
+    <mat-label>Filter</mat-label>
+    <input matInput placeholder="Ex. ium" (keyup)="applyFilter($event)" #input>
+    <!-- (keyup)="applyFilter($event)" -->
+  </mat-form-field>
+
+<table mat-table [dataSource]="dataSource" class="mat-elevation-z8" matSort *ngIf="shwlist">
+    <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> ID </th>
+        <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+    </ng-container>
+    <ng-container matColumnDef="fname">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>FIRST NAME </th>
+        <td mat-cell *matCellDef="let element"> {{element.fname}} </td>
+    </ng-container>
+    <ng-container matColumnDef="lname">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>LAST NAME </th>
+        <td mat-cell *matCellDef="let element"> {{element.lname}} </td>
+    </ng-container>
+    <ng-container matColumnDef="email">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> E-MAIL </th>
+        <td mat-cell *matCellDef="let element"> {{element.email}} </td>
+    </ng-container>
+    <ng-container matColumnDef="phonenumber">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> PHONE NUMBER </th>
+        <td mat-cell *matCellDef="let element"> {{element.phonenumber}} </td>
+    </ng-container>
+    <ng-container matColumnDef="dob">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> DATE OF BIRTH </th>
+        <td mat-cell *matCellDef="let element"> {{element.dob | date}} </td>
+    </ng-container>
+    <ng-container matColumnDef="gender">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> GENDER </th>
+        <td mat-cell *matCellDef="let element"> {{element.gender}} </td>
+    </ng-container>
+    <ng-container matColumnDef="city">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> CITY </th>
+        <td mat-cell *matCellDef="let element"> {{element.city}} </td>
+    </ng-container>
+    <ng-container matColumnDef="state">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> STATE </th>
+        <td mat-cell *matCellDef="let element"> {{element.state}} </td>
+    </ng-container>
+    <ng-container matColumnDef="country">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> COUNTRY </th>
+        <td mat-cell *matCellDef="let element"> {{element.country}} </td>
+    </ng-container>
+    <ng-container matColumnDef="pincode">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> PINCODE </th>
+        <td mat-cell *matCellDef="let element"> {{element.pincode}} </td>
+    </ng-container>
+    <ng-container matColumnDef="education">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> EDUCTION </th>
+        <td mat-cell *matCellDef="let element"> {{element.education}} </td>
+    </ng-container>
+    <ng-container matColumnDef="edit">
+        <th mat-header-cell *matHeaderCellDef> EDIT </th>
+        <td mat-cell *matCellDef="let element"> <a routerLink="/update/{{element.id}}"><button mat-mini-fab color="primary"><mat-icon>edit</mat-icon></button></a></td>
+    </ng-container>
+    <ng-container matColumnDef="delete">
+        <th mat-header-cell *matHeaderCellDef> DELETE </th>
+        <td mat-cell *matCellDef="let element"> <button mat-mini-fab color="warn" (click)="onDelete(element)">
+                    <mat-icon>delete</mat-icon>
+               </button></td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="dcolumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: dcolumns;"></tr>
+
+    <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" colspan="4">No data matching the filter "{{input.value}}"</td>
+      </tr>
+
+</table>
+<mat-paginator [pageSizeOptions]="[5, 10, 15, 20]" aria-label="Select page of users"></mat-paginator>
+<br><br>
+<button mat-fab extended color="accent" (click)="logout()"><mat-icon>logout</mat-icon>LOG OUT</button>
