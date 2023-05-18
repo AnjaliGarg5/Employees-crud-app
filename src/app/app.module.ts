@@ -10,7 +10,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { Dialog, ListComponent, Search } from './list/list.component';
 import { RecordsService } from './records.service';
 import { AddComponent } from './add/add.component';
-import { UpdateComponent } from './update/update.component';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import {MatRadioModule} from '@angular/material/radio';
@@ -36,7 +35,6 @@ import { AuthInterceptor } from './auth.interceptor';
     AddComponent,
     Dialog,
     Search,
-    UpdateComponent,
     SearchPipe,
     RegisterComponent,
     LoginComponent

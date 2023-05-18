@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Employee } from './emp';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -15,14 +14,9 @@ const baseUrl = 'http://localhost:8081';
 })
 export class RecordsService {
 
+  constructor(private router: Router, private snackbar: MatSnackBar, private http: HttpClient) { }
 
-  empData: Employee[] = [
-    { id: "101", fname: 'zzzz', lname: 'Garg', email: 'qwe@abc.com', phoneNumber: 1234567890, dob: new Date("Dec 08 2019"), city: 'jaipur', state: 'rajasthan', country: 'India', pincode: 123456, gender: 'female', education: 'Graduate' },
-    { id: "102", fname: 'Deepak', lname: 'Gupta', email: 'xyz@abc.com', phoneNumber: 1234567890, dob: new Date("Dec 08 2019"), city: 'jaipur', state: 'rajasthan', country: 'India', pincode: 123456, gender: 'male', education: 'Graduate' },
-    { id: "103", fname: 'Ram', lname: 'Sharma', email: 'tyu@abc.com', phoneNumber: 1234567890, dob: new Date("Dec 08 2019"), city: 'jaipur', state: 'rajasthan', country: 'India', pincode: 123456, gender: 'male', education: 'Graduate' },
-    { id: "104", fname: 'Aakash', lname: 'Singh', email: 'jvk@abc.com', phoneNumber: 1234567890, dob: new Date("Dec 08 2019"), city: 'jaipur', state: 'rajasthan', country: 'India', pincode: 123456, gender: 'male', education: 'Graduate' },
-    { id: "105", fname: 'Ravi', lname: 'Kumar', email: 'kxs@abc.com', phoneNumber: 1234567890, dob: new Date("Dec 03 2019"), city: 'jaipur', state: 'rajasthan', country: 'India', pincode: 123456, gender: 'male', education: 'Graduate' },
-  ];
+  datePipe = new DatePipe('en-US');
 
   getRegister(data: any): Observable<any> {
     return this.http.post<any>(`http://localhost:8081/register`, data);
@@ -32,20 +26,21 @@ export class RecordsService {
     return this.http.post<any>(`http://localhost:8081/login`, data).pipe(
       tap({
         next: (res) => {
+          const expiresAt = moment().add(res.expiresIn, 'second');
           this.setSession(res);
+          setTimeout(() => {
+            this.logout();
+          }, expiresAt.valueOf());
         },
         error: (err) => {
           console.error(err);
-
         }
       })
     );
-
   }
 
   private setSession(authResult: any) {
-    const expiresAt = moment().add(authResult.expiresIn, 'hour');
-
+    const expiresAt = moment().add(authResult.expiresIn, 'second');
     localStorage.setItem('id_token', authResult.idToken);
     localStorage.setItem("expires_at", JSON.stringify(expiresAt.valueOf()));
   }
@@ -57,10 +52,6 @@ export class RecordsService {
   deleteInfo(i: any): Observable<any> {
     return this.http.delete<any>(`http://localhost:8081/delete/${i}`);
   }
-
-
-  datePipe = new DatePipe('en-US');
-
 
   addInfo(login: any): Observable<any> {
     const empdob = this.datePipe.transform(login.dob, 'yyyy-MM-dd');
@@ -86,9 +77,23 @@ export class RecordsService {
   logout() {
     localStorage.removeItem("id_token");
     localStorage.removeItem("expires_at");
-    this.router.navigate(['/register']);
-}
+    this.snackbar.open("Session Time out! Login again.", "close");
+    this.router.navigate(['/login']);
+  }
 
-  constructor(private router: Router, private snackbar: MatSnackBar, private http: HttpClient) { }
+  // getExpiration() {
+  //   const expiration = localStorage.getItem("expires_at");
+  //   const expiresAt = expiration !== null ? JSON.parse(expiration) : null;
+  //   return moment(expiresAt);
+  // }
+
+  // public isLoggedIn() {
+  //   return moment().isBefore(this.getExpiration());
+  // }
+
+  // isLoggedOut() {
+  //   return !this.isLoggedIn();
+  // }
+
 }
 

@@ -1,12 +1,8 @@
-<h2>Add Employee</h2>
+<button mat-fab extended color="accent" (click)="list()"><mat-icon>arrow_back_ios</mat-icon> Employee Data</button>
+<h2>FORM</h2>
 <div>
     <form [formGroup]="formdata" (ngSubmit)="onClick(formdata.value)">
         <div class="row">
-            <!-- <mat-form-field appearance="outline">
-                <mat-label>ID</mat-label>
-                <input matInput placeholder="Enter Id" formControlName="id" required>
-                <mat-error>You must enter an Id</mat-error>
-            </mat-form-field> -->
             <mat-form-field appearance="fill">
                 <mat-label>First Name</mat-label>
                 <input matInput placeholder="Enter First Name" formControlName="fname" required>
@@ -26,7 +22,6 @@
                 <mat-error *ngIf="formdata.get('email') && formdata.get('email')?.hasError('email')">Email is
                     invalid</mat-error>
             </mat-form-field>
-
             <mat-form-field hintLabel="Max 10 numbers" appearance="fill">
                 <mat-label>Phone Number</mat-label>
                 <input matInput #input minlength="10" maxlength="10" placeholder="xxxxxxxxxx" required
@@ -40,7 +35,6 @@
                     *ngIf="formdata.get('phonenumber') && formdata.get('phonenumber')?.hasError('minLength')">Phone
                     Number invalid</mat-error>
             </mat-form-field>
-
         </div>
         <div class="row">
             <mat-form-field appearance="fill">
@@ -50,7 +44,6 @@
                 <mat-datepicker #picker></mat-datepicker>
                 <mat-error>Date of Birth is required</mat-error>
             </mat-form-field>
-
             <mat-radio-group formControlName="gender">
                 <mat-label>Gender</mat-label>
                 <mat-radio-button value="female">Female</mat-radio-button>
@@ -64,7 +57,6 @@
                 <input matInput placeholder="Enter City" formControlName="city">
                 <mat-error>City is required</mat-error>
             </mat-form-field>
-
             <mat-form-field>
                 <mat-label>State</mat-label>
                 <input matInput placeholder="Enter State" formControlName="state">
@@ -77,12 +69,11 @@
                 <input matInput placeholder="Enter Country" formControlName="country">
                 <mat-error>Country is required</mat-error>
             </mat-form-field>
-
             <mat-form-field hintLabel="Max 6 characters" appearance="fill">
                 <mat-label>Pincode</mat-label>
-                <input matInput #input minlength="6" maxlength="6" placeholder="xxxxxx" required
+                <input matInput #in minlength="6" maxlength="6" placeholder="xxxxxx" required
                     formControlName="pincode">
-                <mat-hint align="end">{{input.value.length}}/6</mat-hint>
+                <mat-hint align="end">{{in.value.length}}/6</mat-hint>
                 <mat-error *ngIf="formdata.get('pincode') && formdata.get('pincode')?.hasError('required')">Pincode is
                     required</mat-error>
                 <mat-error *ngIf="formdata.get('pincode') && formdata.get('pincode')?.hasError('minLength')">Pincode id
@@ -98,16 +89,10 @@
                 </mat-select>
                 <mat-error>Education is required</mat-error>
             </mat-form-field>
-
-
-
-
-            <!-- <button type="button" mat-raised-button (click)="fileInput.click()">Choose File</button>
-            <input hidden (change)="onFileSelected()" #fileInput type="file" id="file"> -->
-
-
         </div>
         <div class="btn">
-            <button mat-raised-button color="primary" type="submit" [disabled]="formdata.invalid">ADD</button>
+            <button mat-raised-button color="primary" type="submit" [disabled]="formdata.invalid" *ngIf="empId">UPDATE</button>
+            <button mat-raised-button color="primary" type="submit" [disabled]="formdata.invalid" *ngIf="!empId">ADD</button>
         </div>
     </form>
+</div>

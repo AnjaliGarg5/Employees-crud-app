@@ -1,11 +1,12 @@
 const http = require("http");
 require("dotenv").config();
+var mysql = require("mysql");
 
 const express = require("express");
 const app = express();
 const jwt = require("jsonwebtoken");
 const bodyParser = require("body-parser");
-const con = require("./database");
+const db_config = require("./database");
 const argon2 = require("argon2");
 var cors = require("cors");
 app.use(cors());
@@ -13,16 +14,26 @@ app.use(express.json());
 
 var data;
 
-
 app.get("/", authenticateToken, function (req, res) {
+  var con = mysql.createConnection(db_config);
+  con.connect(function (err) {
+    if (err) throw err;
+    console.log("Connected get/");
+  });
   con.query("SELECT * FROM personal_info", function (error, response) {
     if (!error) {
       res.send(response);
     } else console.log(error);
   });
+  con.end();
 });
 
 app.get("/getId/:id", authenticateToken, function (req, res) {
+  var con = mysql.createConnection(db_config);
+  con.connect(function (err) {
+    if (err) throw err;
+    console.log("Connected getid/id");
+  });
   var id = parseInt(req.params.id);
   con.query(
     "SELECT * FROM personal_info WHERE id = ? ",
@@ -33,6 +44,7 @@ app.get("/getId/:id", authenticateToken, function (req, res) {
       } else console.log(error);
     }
   );
+  con.end();
 });
 
 app.post(
@@ -40,6 +52,11 @@ app.post(
   authenticateToken,
   bodyParser.json(),
   function (req, response) {
+    var con = mysql.createConnection(db_config);
+    con.connect(function (err) {
+      if (err) throw err;
+      console.log("Connected post add");
+    });
     var fname = req.body.fname;
     var lname = req.body.lname;
     var email = req.body.email;
@@ -84,6 +101,7 @@ app.post(
         } else console.log(error);
       }
     );
+    con.end();
   }
 );
 
@@ -92,6 +110,11 @@ app.delete(
   authenticateToken,
   bodyParser.json(),
   function (req, res) {
+    var con = mysql.createConnection(db_config);
+    con.connect(function (err) {
+      if (err) throw err;
+      console.log("Connected delete");
+    });
     console.log(req.params);
     console.log(req.params.id);
     var id = req.params.id;
@@ -101,6 +124,7 @@ app.delete(
       else console.log(error);
     });
     res.send();
+    con.end();
   }
 );
 
@@ -109,9 +133,15 @@ app.put(
   authenticateToken,
   bodyParser.json(),
   function (req, res) {
+    var con = mysql.createConnection(db_config);
+    con.connect(function (err) {
+      if (err) throw err;
+      console.log("Connected put/update/id");
+    });
+    console.log(req.body)
     var oid = req.params.oid;
-    var id = req.body.id;
     var fname = req.body.fname;
+    console.log(fname)
     var lname = req.body.lname;
     var email = req.body.email;
     var phonenumber = req.body.phonenumber;
@@ -123,11 +153,10 @@ app.put(
     var pincode = req.body.pincode;
     var education = req.body.education;
     var sql =
-      "UPDATE `personal_info` SET `id` = ?, `fname` = ?, `lname` = ?, `email` = ?, `phonenumber` = ?, `dob` = ?, `gender`=?, `city` = ?, `state` = ?, `country` = ?, `pincode` = ?, `education` = ?  WHERE (`id` = ?) ";
+      "UPDATE `personal_info` SET `fname` = ?, `lname` = ?, `email` = ?, `phonenumber` = ?, `dob` = ?, `gender`=?, `city` = ?, `state` = ?, `country` = ?, `pincode` = ?, `education` = ?  WHERE (`id` = ?) ";
     con.query(
       sql,
       [
-        id,
         fname,
         lname,
         email,
@@ -146,10 +175,16 @@ app.put(
         else console.log(error);
       }
     );
+    con.end();
   }
 );
 
 app.post("/login", (req, res) => {
+  var con = mysql.createConnection(db_config);
+  con.connect(function (err) {
+    if (err) throw err;
+    console.log("Connected login");
+  });
   var email = req.body.email;
   var pwd = req.body.pwd;
   con.query(
@@ -166,7 +201,7 @@ app.post("/login", (req, res) => {
               if (match) {
                 data = response;
                 token = jwt.sign({ ...data }, process.env.ACCESS_TOKEN_SECRET, {
-                  expiresIn: "24h",
+                  expiresIn: 500,
                 });
                 data = { name: response[0].name, email: response[0].email };
                 res.status(200).json({
@@ -184,10 +219,15 @@ app.post("/login", (req, res) => {
       } else console.log(error);
     }
   );
+  con.end();
 });
 
 app.post("/register", bodyParser.json(), async function (req, res) {
-  console.log(req.body);
+  var con = mysql.createConnection(db_config);
+  con.connect(function (err) {
+    if (err) throw err;
+    console.log("Connected register");
+  });
   try {
     var name = req.body.name;
     var email = req.body.email;
@@ -204,6 +244,7 @@ app.post("/register", bodyParser.json(), async function (req, res) {
   } catch {
     res.status(501).send();
   }
+  con.end();
 });
 
 function authenticateToken(req, res, next) {

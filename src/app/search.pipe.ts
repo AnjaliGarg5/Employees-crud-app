@@ -13,9 +13,5 @@ export class SearchPipe implements PipeTransform {
     return dataSource.filter(function(item:any){
       return JSON.stringify(item).toLowerCase().includes(filterValue);
     }) 
-  
-   // = filterValue.trim().toLowerCase();
-
   }
-
 }
