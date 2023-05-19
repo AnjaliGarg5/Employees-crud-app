@@ -30,12 +30,12 @@ export class LoginComponent {
   onClick(val: any) {
     this.rservice.getLogin(val).subscribe({
       next: (res) => {
-        this.snackbar.open("Login Successfuly", "close", {duration: 10});
+        this.snackbar.open("Login Successfuly", "close");
         this.router.navigate(['/list']);
       },
       error: (err) => {
         console.log(err.error)
-        this.snackbar.open(err.error, "close", {duration: 10});
+        this.snackbar.open(err.error, "close");
       }
     });
   }

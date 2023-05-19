@@ -21,7 +21,6 @@ export class ListComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.rservice.getinfo().subscribe({
       next: data => {
-        console.log(data);
         this.infoReceived = data;
         this.dataSource = new MatTableDataSource(this.infoReceived);
         this.dataSource.paginator = this.paginator;
@@ -29,8 +28,8 @@ export class ListComponent implements OnInit, AfterViewInit {
         this.shwlist = true;
       },
       error: (err) => {
+        console.log(err);
         console.error(err)
-        this.rservice.logout();
       }
     });
   }

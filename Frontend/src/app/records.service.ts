@@ -7,7 +7,7 @@ import { catchError, retry, tap } from 'rxjs/operators';
 import * as moment from "moment";
 import { DatePipe } from '@angular/common';
 
-const baseUrl = 'http://localhost:8081/employee/getList';
+const baseUrl = 'http://localhost:8081/employee/';
 
 @Injectable({
   providedIn: 'root'
@@ -19,18 +19,20 @@ export class RecordsService {
   datePipe = new DatePipe('en-US');
 
   getRegister(data: any): Observable<any> {
-    return this.http.post<any>(`http://localhost:8081/register`, data);
+    return this.http.post<any>(baseUrl + 'register', data);
   }
 
   getLogin(data: any): Observable<any> {
-    return this.http.post<any>(`http://localhost:8081/login`, data).pipe(
+    console.log(data)
+    return this.http.post<any>(baseUrl +'login', data).pipe(
       tap({
         next: (res) => {
           const expiresAt = moment().add(res.expiresIn, 'hour');
+          console.log(res)
           this.setSession(res);
-          // setTimeout(() => {
-          //   this.logout();
-          // }, expiresAt.valueOf());
+          setTimeout(() => {
+            this.sessionOut();
+          }, expiresAt.valueOf());
         },
         error: (err) => {
           console.error(err);
@@ -41,16 +43,17 @@ export class RecordsService {
 
   private setSession(authResult: any) {
     const expiresAt = moment().add(authResult.expiresIn, 'hour');
+    console.log(authResult.idToken)
     localStorage.setItem('id_token', authResult.idToken);
     localStorage.setItem("expires_at", JSON.stringify(expiresAt.valueOf()));
   }
 
   getinfo(): Observable<any> {
-    return this.http.get<any>(`http://localhost:8081/employee/getList`);
+    return this.http.get<any>(baseUrl +`getList`);
   }
 
   deleteInfo(i: any): Observable<any> {
-    return this.http.delete<any>(`http://localhost:8081/delete/${i}`);
+    return this.http.delete<any>(baseUrl +`/delete/${i}`);
   }
 
   addInfo(login: any): Observable<any> {
@@ -59,7 +62,7 @@ export class RecordsService {
       fname: login.fname,
       lname: login.lname, email: login.email, phonenumber: login.phonenumber, dob: empdob, city: login.city, state: login.state, country: login.country, pincode: login.pincode, gender: login.gender, education: login.education
     };
-    return this.http.post<any>(`http://localhost:8081/add`, data);
+    return this.http.post<any>(baseUrl +`add`, data);
   }
 
   updateInfo(i: any, oldId: any): Observable<any> {
@@ -67,18 +70,25 @@ export class RecordsService {
     const data = {
       id: i.id, fname: i.fname, lname: i.lname, email: i.email, phonenumber: i.phonenumber, dob: empdob, city: i.city, state: i.state, country: i.country, pincode: i.pincode, gender: i.gender, education: i.education
     };
-    return this.http.put<any>(baseUrl + `/update/${oldId}`, data);
+    return this.http.put<any>(baseUrl + `update/${oldId}`, data);
   }
 
   getData(empId: any): Observable<any> {
-    return this.http.get<any>(`http://localhost:8081/getId/${empId}`);
+    return this.http.get<any>(baseUrl +`getId/${empId}`);
   }
 
   logout() {
-    // localStorage.removeItem("id_token");
-    // localStorage.removeItem("expires_at");
-    // this.snackbar.open("Session Time out! Login again.", "close");
-    // this.router.navigate(['/login']);
+    localStorage.removeItem("id_token");
+    localStorage.removeItem("expires_at");
+    this.snackbar.open("Logged out", "close");
+    this.router.navigate(['/login']);
+  }
+
+  sessionOut() {
+    localStorage.removeItem("id_token");
+    localStorage.removeItem("expires_at");
+    this.snackbar.open("Session Time out! Login again.", "close");
+    this.router.navigate(['/login']);
   }
 
   // getExpiration() {
