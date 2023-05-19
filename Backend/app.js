@@ -6,27 +6,30 @@ const express = require("express");
 const app = express();
 const jwt = require("jsonwebtoken");
 const bodyParser = require("body-parser");
-const db_config = require("./database");
+const dbcon= require("./config/database.config");
 const argon2 = require("argon2");
 var cors = require("cors");
 app.use(cors());
 app.use(express.json());
 
 var data;
+const empRoute = require('./src/Routes/emp.routes');
 
-app.get("/", authenticateToken, function (req, res) {
-  var con = mysql.createConnection(db_config);
-  con.connect(function (err) {
-    if (err) throw err;
-    console.log("Connected get/");
-  });
-  con.query("SELECT * FROM personal_info", function (error, response) {
-    if (!error) {
-      res.send(response);
-    } else console.log(error);
-  });
-  con.end();
-});
+app.use('/employee', empRoute);
+
+// app.get("/", authenticateToken, function (req, res) {
+//   var con = mysql.createConnection(db_config);
+//   con.connect(function (err) {
+//     if (err) throw err;
+//     console.log("Connected get/");
+//   });
+//   con.query("SELECT * FROM personal_info", function (error, response) {
+//     if (!error) {
+//       res.send(response);
+//     } else console.log(error);
+//   });
+//   con.end();
+// });
 
 app.get("/getId/:id", authenticateToken, function (req, res) {
   var con = mysql.createConnection(db_config);
@@ -180,17 +183,15 @@ app.put(
 );
 
 app.post("/login", (req, res) => {
-  var con = mysql.createConnection(db_config);
-  con.connect(function (err) {
-    if (err) throw err;
-    console.log("Connected login");
-  });
+  dbcon.createConnection();
+  const con = dbcon.connect();
   var email = req.body.email;
   var pwd = req.body.pwd;
   con.query(
     "SELECT email, name, pwd FROM `registered` WHERE email = ? ",
     [email],
     async function (error, response) {
+      con.end();
       if (!error) {
         if (response.rowCount == 0) {
           return res.status(400).send("First Register yourself!");
@@ -201,7 +202,7 @@ app.post("/login", (req, res) => {
               if (match) {
                 data = response;
                 token = jwt.sign({ ...data }, process.env.ACCESS_TOKEN_SECRET, {
-                  expiresIn: 500,
+                  expiresIn: '24h',
                 });
                 data = { name: response[0].name, email: response[0].email };
                 res.status(200).json({
@@ -219,15 +220,12 @@ app.post("/login", (req, res) => {
       } else console.log(error);
     }
   );
-  con.end();
+  
 });
 
 app.post("/register", bodyParser.json(), async function (req, res) {
-  var con = mysql.createConnection(db_config);
-  con.connect(function (err) {
-    if (err) throw err;
-    console.log("Connected register");
-  });
+  dbcon.createConnection();
+  const con = dbcon.connect();
   try {
     var name = req.body.name;
     var email = req.body.email;
@@ -237,6 +235,7 @@ app.post("/register", bodyParser.json(), async function (req, res) {
       hpwd = hashedPwd;
       var sql = "INSERT INTO `registered` (email, pwd, name) VALUES (?, ?, ?)";
       con.query(sql, [email, hpwd, name], function (error, response) {
+        con.end();
         if (!error) res.send("Registered! Login to get your Token.");
         else console.log(error);
       });
@@ -244,7 +243,7 @@ app.post("/register", bodyParser.json(), async function (req, res) {
   } catch {
     res.status(501).send();
   }
-  con.end();
+  
 });
 
 function authenticateToken(req, res, next) {

@@ -7,7 +7,7 @@ import { catchError, retry, tap } from 'rxjs/operators';
 import * as moment from "moment";
 import { DatePipe } from '@angular/common';
 
-const baseUrl = 'http://localhost:8081';
+const baseUrl = 'http://localhost:8081/employee/getList';
 
 @Injectable({
   providedIn: 'root'
@@ -26,11 +26,11 @@ export class RecordsService {
     return this.http.post<any>(`http://localhost:8081/login`, data).pipe(
       tap({
         next: (res) => {
-          const expiresAt = moment().add(res.expiresIn, 'second');
+          const expiresAt = moment().add(res.expiresIn, 'hour');
           this.setSession(res);
-          setTimeout(() => {
-            this.logout();
-          }, expiresAt.valueOf());
+          // setTimeout(() => {
+          //   this.logout();
+          // }, expiresAt.valueOf());
         },
         error: (err) => {
           console.error(err);
@@ -40,13 +40,13 @@ export class RecordsService {
   }
 
   private setSession(authResult: any) {
-    const expiresAt = moment().add(authResult.expiresIn, 'second');
+    const expiresAt = moment().add(authResult.expiresIn, 'hour');
     localStorage.setItem('id_token', authResult.idToken);
     localStorage.setItem("expires_at", JSON.stringify(expiresAt.valueOf()));
   }
 
   getinfo(): Observable<any> {
-    return this.http.get<any>(baseUrl);
+    return this.http.get<any>(`http://localhost:8081/employee/getList`);
   }
 
   deleteInfo(i: any): Observable<any> {
@@ -75,10 +75,10 @@ export class RecordsService {
   }
 
   logout() {
-    localStorage.removeItem("id_token");
-    localStorage.removeItem("expires_at");
-    this.snackbar.open("Session Time out! Login again.", "close");
-    this.router.navigate(['/login']);
+    // localStorage.removeItem("id_token");
+    // localStorage.removeItem("expires_at");
+    // this.snackbar.open("Session Time out! Login again.", "close");
+    // this.router.navigate(['/login']);
   }
 
   // getExpiration() {
